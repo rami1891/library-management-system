@@ -3,8 +3,15 @@ import mysql.connector
 from mysql.connector import Error
 from Book import Book
 
+
 class Library:
-    def __init__(self, host='localhost', user='root', password='R00t1234!@#$', db_name='library'):
+    def __init__(
+        self,
+        host="mysql-service",
+        user="root",
+        password="R00t1234!@#$",
+        db_name="library",
+    ):
         self.books = []
         self.host = host
         self.user = user
@@ -21,7 +28,7 @@ class Library:
                 host=self.host,
                 user=self.user,
                 password=self.password,
-                database=self.db_name
+                database=self.db_name,
             )
             print("Connection to database established successfully.")
             return conn
@@ -32,7 +39,8 @@ class Library:
     def create_table(self):
         try:
             cursor = self.conn.cursor()
-            cursor.execute('''
+            cursor.execute(
+                """
                 CREATE TABLE IF NOT EXISTS books (
                     book_id INT AUTO_INCREMENT PRIMARY KEY,
                     title VARCHAR(255) NOT NULL,
@@ -40,7 +48,8 @@ class Library:
                     year INT,
                     isbn VARCHAR(20) UNIQUE NOT NULL
                 )
-            ''')
+            """
+            )
             self.conn.commit()
             print("Table 'books' created or verified successfully.")
         except Error as e:
@@ -49,7 +58,7 @@ class Library:
     def load_books_from_db(self):
         try:
             cursor = self.conn.cursor()
-            cursor.execute('SELECT * FROM books')
+            cursor.execute("SELECT * FROM books")
             rows = cursor.fetchall()
             for row in rows:
                 self.books.append(Book(row[1], row[2], row[4], row[3]))
@@ -62,10 +71,13 @@ class Library:
                 if b.isbn == book.isbn:
                     return "Book already exists"
             cursor = self.conn.cursor()
-            cursor.execute('''
+            cursor.execute(
+                """
                 INSERT INTO books (title, author, year, isbn)
                 VALUES (%s, %s, %s, %s)
-            ''', (book.title, book.author, book.year, book.isbn))
+            """,
+                (book.title, book.author, book.year, book.isbn),
+            )
             self.conn.commit()
 
             # Update the in-memory books list
@@ -79,7 +91,7 @@ class Library:
     def display_books(self):
         try:
             cursor = self.conn.cursor()
-            cursor.execute('SELECT * FROM books')
+            cursor.execute("SELECT * FROM books")
             rows = cursor.fetchall()
             return "\n".join(f"{row[1]}, {row[2]}, {row[3]}, {row[4]}" for row in rows)
         except Error as e:
@@ -88,7 +100,7 @@ class Library:
     def find_book(self, isbn):
         try:
             cursor = self.conn.cursor()
-            cursor.execute('SELECT * FROM books WHERE isbn = %s', (isbn,))
+            cursor.execute("SELECT * FROM books WHERE isbn = %s", (isbn,))
             row = cursor.fetchone()
             if row:
                 return f"{row[1]}, {row[2]}, {row[3]}, {row[4]}"
@@ -99,7 +111,7 @@ class Library:
     def remove_book(self, isbn):
         try:
             cursor = self.conn.cursor()
-            cursor.execute('DELETE FROM books WHERE isbn = %s', (isbn,))
+            cursor.execute("DELETE FROM books WHERE isbn = %s", (isbn,))
             self.conn.commit()
             if cursor.rowcount > 0:
                 # Update the in-memory books list
@@ -130,7 +142,7 @@ class Library:
             return "Books loaded from file."
         except Exception as e:
             return str(e)
-    
+
     def __del__(self):
         if self.conn:
             self.conn.close()

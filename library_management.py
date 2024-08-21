@@ -17,7 +17,12 @@ def main():
         print("5. Save to file")
         print("6. Load from file")
         print("7. Exit")
-        choice = input("Enter choice: ")
+        try:
+            choice = input("Enter choice: ")
+        except EOFError:  
+                print("\nEOFError: No input received. Continuing...")
+                continue
+
 
     # Use a match statement to match the choice
         match choice:

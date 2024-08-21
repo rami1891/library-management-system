@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: library-management-system
+  namespace: library-system
+  labels:
+    app: library-management
+spec:
+  replicas: 1  
+  selector:
+    matchLabels:
+      app: library-management
+  template:
+    metadata:
+      labels:
+        app: library-management
+    spec:
+      containers:
+      - name: library-management-container
+        image: rami1891/library_management_system:v1.2
+        ports:
+        - containerPort: 8080  # The port your app listens on
+        env:
+        - name: MYSQL_HOST
+          value: "mysql-service"  
+        - name: MYSQL_USER
+          value: "root"
+        - name: MYSQL_PASSWORD
+          value: "R00t1234!@#$"
+        - name: MYSQL_DB
+          value: "library"  
+        resources:
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: library-management-service
+  labels:
+    app: library-management
+spec:
+  type: ClusterIP
+  ports:
+  - port: 80
+    targetPort: 8080  # Port the container listens on
+  selector:
+    app: library-management
