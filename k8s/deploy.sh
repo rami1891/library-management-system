@@ -1,6 +1,5 @@
 #!/bin/bash
 
-# Apply each YAML file manually
 kubectl apply -f namespace.yaml
 kubectl apply -f mysql-secret.yaml
 kubectl apply -f config-map.yaml
@@ -8,6 +7,6 @@ kubectl apply -f mysql-storage.yaml
 kubectl apply -f mysql-deployment.yaml
 kubectl apply -f library-deployment.yaml 
 kubectl apply -f hpa.yaml
-# Add more lines as needed for additional YAML files
+kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
 
 echo "Deployment complete."
