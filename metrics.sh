@@ -22,7 +22,4 @@ update_metrics_server
 sleep 10 # Wait for the update to take effect
 
 
-# Uncomment if you're using Minikube and need to restart it
-# restart_minikube
-
 echo "Metrics-server troubleshooting complete."
